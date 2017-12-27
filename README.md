@@ -1,5 +1,3 @@
-amwaketool - Starts Kodi on Linux remotely from a phone/tablet. Compatible with the Kore and Yatse apps.
-
 <h1>Introduction</h1>
 
 amwaketool enables the "Wake up" function in the Kore and Yatse Android and iOS apps. This means that Kodi running on Linux devices can be started remotely from Kore or Yatse.

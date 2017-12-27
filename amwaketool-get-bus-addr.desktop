@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=amwaketool-get-bus-addr
+GenericName=amwaketool-get-bus-addr
+Comment=Write dbus session bus address to file
+NoDisplay=true
+Exec=/usr/local/bin/amwaketool-get-bus-addr
+StartupNotify=false
+

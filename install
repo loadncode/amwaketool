@@ -1,0 +1,137 @@
+#!/bin/bash
+
+# Copyright (C) 2016 Adam Makepeace
+# Email: adam.makepeace@hotmail.co.uk
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+if [ $(id -u) != 0 ]; then
+    echo "You must run this script as superuser."
+    exit 1
+fi
+
+if [ $XDG_CONFIG_DIRS ]; then apath=$XDG_CONFIG_DIRS/autostart
+else apath=/etc/xdg/autostart; fi
+
+# see man systemd.unit(5)
+if [ "$SYSTEMD_UNIT_PATH" ]; then
+    if [[ "$SYSTEMD_UNIT_PATH" == *\: ]]; then
+        sysdpath=${SYSTEMD_UNIT_PATH%:}
+        sysdpath=$sysdpath/etc/systemd/system
+    else sysdpath=$SYSTEMD_UNIT_PATH
+    fi
+else sysdpath=/etc/systemd/system
+fi
+
+case "$1" in
+    "")
+        message="Due to this you will need to logout of your desktop environment and then login again after this script has finished in order to finalise the installation.\n\nPress return to continue...\n"
+
+        getbus=yes
+
+        truename=$(logname)        
+        if [ "$?" != 0 ]; then
+            printf '%s%b\n' "Could not get login name. " "$message"
+            read    
+            getbus=no
+        fi
+
+        if [ "$truename" == root ]; then
+            getbus=no
+            printf '%s%b\n' "You appear to be running as root, not superuser. " "$message"
+            read
+        fi
+
+        if [[ "$SSH_CLIENT" ]] || [[ "$SSH_TTY" ]] || [[ "$SSH_CONNECTION" ]] || [[ $(ps -q $PPID -o comm=) == sshd ]]; then
+            getbus=no
+            printf '%s%b\n' "You appear to be running in a remote SSH session. " "$message"
+            read
+        fi
+        
+        
+        cp amwaketool.py /usr/local/bin/amwaketool.py
+        chmod 755 /usr/local/bin/amwaketool.py
+        chown 0:0 /usr/local/bin/amwaketool.py
+        
+        cp amwaketool-dbus-service.py /usr/local/bin/amwaketool-dbus-service.py
+        chmod 755 /usr/local/bin/amwaketool-dbus-service.py
+        chown 0:0 /usr/local/bin/amwaketool-dbus-service.py
+
+        cp org.amwaketool.service /usr/share/dbus-1/services/org.amwaketool.service
+        chmod 644 /usr/share/dbus-1/services/org.amwaketool.service
+        chown 0:0 /usr/share/dbus-1/services/org.amwaketool.service
+
+        cp amwaketool-get-bus-addr /usr/local/bin
+        chmod 755 /usr/local/bin/amwaketool-get-bus-addr
+        chown 0:0 /usr/local/bin/amwaketool-get-bus-addr
+        
+        if [ "$getbus" == yes ]; then
+            su -c amwaketool-get-bus-addr "$truename"
+        fi
+
+        if [ -d "$apath" ]; then
+            cp amwaketool-get-bus-addr.desktop "$apath"
+            chmod 644 $apath/amwaketool-get-bus-addr.desktop
+            chown 0:0 $apath/amwaketool-get-bus-addr.desktop
+        else echo "Can't find Freedesktop Autostart directory, skipping Autostart file installation. WARNING: You will need to install the amwaketool-get-bus-addr bash script manually, amwaketool won't work without it."
+        fi
+
+        if [ -d "$sysdpath" ]; then
+            cp amwaketool.service "$sysdpath"
+            chmod 644 $sysdpath/amwaketool.service
+            chown 0:0 $sysdpath/amwaketool.service
+
+            systemctl daemon-reload
+            systemctl start amwaketool.service
+            systemctl enable amwaketool.service
+
+        else echo "Can't find Systemd directory, skipping service file installation. WARNING: You will need to find a way of starting amwaketool.py at boot as root."
+        fi
+
+        echo
+        echo "Installation complete!"
+        echo
+        ;;
+
+    --uninstall)
+        if [ -d "$sysdpath" ]; then
+            systemctl stop amwaketool.service
+            systemctl disable amwaketool.service
+            rm $sysdpath/amwaketool.service
+            systemctl daemon-reload
+        fi
+
+        if [ -d "$apath" ]; then
+            rm $apath/amwaketool-get-bus-addr.desktop
+        fi
+            
+        rm /usr/local/bin/amwaketool-get-bus-addr
+
+        if [ $(pgrep -f amwaketool-dbus-service.py) ]; then kill -9 $(pgrep -f amwaketool-dbus-service.py); fi
+
+        rm /usr/local/bin/amwaketool-dbus-service.py
+        rm /usr/share/dbus-1/services/org.amwaketool.service
+        rm /usr/local/bin/amwaketool.py
+
+        ./removebusaddr.py
+        
+        echo
+        echo "Uninstallation complete!"
+        echo
+        ;;
+    *)
+        echo "Usage: install [--uninstall]"
+esac
+

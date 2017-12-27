@@ -1,0 +1,10 @@
+[Unit]
+Description=amwaketool
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/amwaketool.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+
+[D-BUS Service]
+Name=org.amwaketool
+Exec=/usr/local/bin/amwaketool-dbus-service.py
+

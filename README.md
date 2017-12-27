@@ -2,7 +2,7 @@
 
 amwaketool enables the "Wake up" function in the Kore and Yatse Android and iOS apps. This means that Kodi running on Linux devices can be started remotely from Kore or Yatse.
 
-amwaketool runs Kodi from within the active user's environment (and with the active user's permissions) to ensure that Kodi features such as device power management work. amwaketool can be installed on multiple devices within the same LAN without conflicting. amwaketool also functions across different GUI user login sessions and does not conflict with local (non-remote) methods of starting Kodi.
+amwaketool runs Kodi from within the active user's session (and with the active user's permissions) to ensure that Kodi features such as device power management work. amwaketool can be installed on multiple devices within the same LAN without conflicting. amwaketool also functions across different GUI user login sessions and does not conflict with local (non-remote) methods of starting Kodi.
 
 Note that amwaketool requires root permissions by default because it listens on UDP port 9 which is a priviledged port.
 
@@ -48,7 +48,7 @@ Once it has validated the packets, amwaketool attempts to connect to Kodi's (loc
 
 amwaketool then checks which login session is both the active and local one using either systemd-logind or ConsoleKit. It then lowers its privileges to the UID/GID of the active and local session. It then connects to this user's D-Bus Session Bus and uses D-Bus Activation to start the org.amwaketool D-Bus service. Finally it tells org.amwaketool to start Kodi in the user's X11 session.
 
-Note that the way that amwaketool.py connects to the Session Bus is by reading "~/.amwaketool/dbus_session_bus_address". This file is created/updated on each user's X11 login by the bash script "amwaketool-get-bus-addr". It only works if you have the environment variable $DBUS_SESSION_BUS_ADDRESS present in your X11 environment, which it should be. There also exists "~/.dbus/session-bus/*" which is written by D-Bus itself but I have found the information contained in these files to be inconsistent and/or outdated (hence I didn't use them).
+Note that the way that amwaketool.py connects to the Session Bus is by reading "\~/.amwaketool/dbus_session_bus_address". This file is created/updated on each user's X11 login by the bash script "amwaketool-get-bus-addr". It only works if you have the environment variable $DBUS_SESSION_BUS_ADDRESS present in your X11 environment, which it should be. There also exists "\~/.dbus/session-bus/*" which is written by D-Bus itself but I have found the information contained in these files to be inconsistent and/or outdated (hence I didn't use them).
 
 <h1>Misc</h1>
 

@@ -28,8 +28,9 @@ You can either install these with pip or (if available) via your distro's reposi
 
 <h1>Installing / Uninstalling</h1>
 
-* cd to wherever you downloaded amwaketool
-* Run the following command (ideally from a local session as superuser, not actual root): "./install"
+* git clone https://github.com/loadncode/amwaketool.git
+* cd amwaketool
+* ./install (ideally run from a local session and as superuser, not actual root)
 
 * To uninstall run ./install --uninstall
 

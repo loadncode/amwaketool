@@ -24,7 +24,6 @@ import struct
 import sys
 import json
 import pwd
-import subprocess
 # import systemd.journal
 try: import dbus
 except ImportError: errlist.append('dbus')

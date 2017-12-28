@@ -17,8 +17,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-errlist = list()
 from __future__ import print_function
+
+errlist = list()
 import socket
 import os
 import struct
@@ -38,15 +39,15 @@ except ImportError: errlist.append('netifaces')
 host = ''
 port = 9
 interface = ''
-init = '\xff'*6
+init = b'\xff'*6
 count = 0
 lastuid = -1
 
 if len(errlist) > 0:
-    sys.stderr.write('\n\033[31;1m'+'Error: '+'\033[0m'+'The following Python 2.x modules are not installed:'+'\n\n')
+    sys.stderr.write('\n\033[31;1m'+'Error: '+'\033[0m'+'The following Python modules are not installed:'+'\n\n')
     for item in errlist:
         sys.stderr.write(item+'\n')
-    sys.stderr.write('\n'+'Please install them and try again, see README for more information on how to do this.'+'\n\n')
+    sys.stderr.write('\n'+'Please install them and try again, see README.md for more information on how to do this.'+'\n\n')
     sys.exit(1)
 
 if port < 1024 and not os.getuid() == 0:

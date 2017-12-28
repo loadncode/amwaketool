@@ -67,7 +67,7 @@ def getmac():
     # for MAC address read /sys/class/net/[interface]/address
     if interface == '':
         defgate = netifaces.gateways()['default']
-        inter = defgate[defgate.keys()[0]][1]
+        inter = defgate[list(defgate.keys())[0]][1]
     else: inter = interface
     mac = netifaces.ifaddresses(inter)[netifaces.AF_LINK][0]['addr']
     return mac

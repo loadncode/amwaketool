@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 # Copyright (C) 2016 Adam Makepeace
 # Email: adam.makepeace@hotmail.co.uk
@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+from __future__ import print_function
 
 import pwd
 import re
@@ -43,4 +45,4 @@ for home in homelist:
     try: os.rmdir(home+'/.amwaketool')
     except OSError as e:
         if e.errno == errno.ENOTEMPTY:
-            print '\033[31;1m'+'Warning: '+'\033[0m'+'cannot remove '+'\033[3m'+home+'/.amwaketool'+'\033[0m'+', directory is not empty'
+            print('\033[31;1m'+'Warning: '+'\033[0m'+'cannot remove '+'\033[3m'+home+'/.amwaketool'+'\033[0m'+', directory is not empty')

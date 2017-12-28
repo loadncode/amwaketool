@@ -1,4 +1,4 @@
-#! /usr/bin/python2
+#! /usr/bin/python
 
 # Copyright (C) 2016 Adam Makepeace
 # Email: adam.makepeace@hotmail.co.uk
@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+from __future__ import print_function
 
 errlist = list()
 try: import dbus
@@ -46,7 +48,7 @@ bname = 'org.amwaketool' # bus and interface name
 class waketool(dbus.service.Object):
 
     def sighandler(self):
-        if debug: print 'wait'
+        if debug: print('wait')
         ret = obj.wait()
         self.endkodi(ret)
 
@@ -60,7 +62,7 @@ class waketool(dbus.service.Object):
 
     @dbus.service.signal(bname)
     def endkodi(self,ret):
-        if debug: print 'emit signal'
+        if debug: print('emit signal')
 
     @dbus.service.method(bname)
     def exit(self): loop.quit()

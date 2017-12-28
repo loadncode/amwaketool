@@ -18,6 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 errlist = list()
+from __future__ import print_function
 import socket
 import os
 import struct
@@ -136,7 +137,7 @@ def iskodirunning():
 
 def signalhandler(ret):
     loop.quit()
-    if debug: print 'Kodi has exited (signal received) with return code:',ret
+    if debug: print('Kodi has exited (signal received) with return code:',ret)
 
 while True:
     s = opensoc(host,port,'bind')
@@ -145,7 +146,7 @@ while True:
     while not found:
         # UDP max packet size is 65536, magic packet size is 102 for 48-bit MAC addresses
         conn1 = s.recv(102)
-        if debug: print 'Received a packet...'
+        if debug: print('Received a packet...')
 
         # Yatse sends some text, then magic packet. Kore just sends two identical magic packets.
         if conn1 == 'YatseStart-Xbmc' or conn1.startswith(init):
@@ -153,21 +154,21 @@ while True:
             try: conn2 = s.recv(102)
             except socket.timeout: continue
             finally: s.settimeout(None)
-            if debug: print 'This one looks like a WOL packet'
+            if debug: print('This one looks like a WOL packet')
         if conn1 == 'YatseStart-Xbmc': found = chkmagic(conn2)
         else:
             found1 = chkmagic(conn1)
             if found1: found = chkmagic(conn2)
 
-    if debug: print 'Now found 2nd packet and validated packet(s)'
-    if debug: print 'Checking to see if Kodi is already running'
+    if debug: print('Now found 2nd packet and validated packet(s)')
+    if debug: print('Checking to see if Kodi is already running')
     # Check if ANY instance of Kodi running
     running = iskodirunning()
     if running: continue
 
     s.close()
     
-    if debug: print 'Now trying to start Kodi over D-Bus'
+    if debug: print('Now trying to start Kodi over D-Bus')
     if lastuid == -1: pass
     else: lastuid = uid
     try: uid = getactivesysd()
@@ -190,7 +191,7 @@ while True:
         service = bus.get_object('org.amwaketool','/')
     
     pid = service.startkodi()
-    if debug: print 'Kodi has started with PID =',pid
+    if debug: print('Kodi has started with PID =',pid)
 
     loop = gi.repository.GLib.MainLoop()
     run = loop.run()

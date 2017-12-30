@@ -150,13 +150,13 @@ while True:
         if debug: print('Received a packet...')
 
         # Yatse sends some text, then magic packet. Kore just sends two identical magic packets.
-        if conn1 == 'YatseStart-Xbmc' or conn1.startswith(init):
+        if conn1 == b'YatseStart-Xbmc' or conn1.startswith(init):
             s.settimeout(1) # possibly needs increasing
             try: conn2 = s.recv(102)
             except socket.timeout: continue
             finally: s.settimeout(None)
             if debug: print('This one looks like a WOL packet')
-        if conn1 == 'YatseStart-Xbmc': found = chkmagic(conn2)
+        if conn1 == b'YatseStart-Xbmc': found = chkmagic(conn2)
         else:
             found1 = chkmagic(conn1)
             if found1: found = chkmagic(conn2)

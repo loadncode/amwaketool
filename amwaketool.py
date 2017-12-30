@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Copyright (C) 2016 Adam Makepeace
 # Email: adam.makepeace@hotmail.co.uk

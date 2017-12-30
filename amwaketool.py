@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 # Copyright (C) 2016 Adam Makepeace
 # Email: adam.makepeace@hotmail.co.uk
@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+from __future__ import print_function
 
 errlist = list()
 import socket
@@ -37,15 +39,15 @@ except ImportError: errlist.append('netifaces')
 host = ''
 port = 9
 interface = ''
-init = '\xff'*6
+init = b'\xff'*6
 count = 0
 lastuid = -1
 
 if len(errlist) > 0:
-    sys.stderr.write('\n\033[31;1m'+'Error: '+'\033[0m'+'The following Python 2.x modules are not installed:'+'\n\n')
+    sys.stderr.write('\n\033[31;1m'+'Error: '+'\033[0m'+'The following Python modules are not installed:'+'\n\n')
     for item in errlist:
         sys.stderr.write(item+'\n')
-    sys.stderr.write('\n'+'Please install them and try again, see README for more information on how to do this.'+'\n\n')
+    sys.stderr.write('\n'+'Please install them and try again, see README.md for more information on how to do this.'+'\n\n')
     sys.exit(1)
 
 if port < 1024 and not os.getuid() == 0:
@@ -65,7 +67,7 @@ def getmac():
     # for MAC address read /sys/class/net/[interface]/address
     if interface == '':
         defgate = netifaces.gateways()['default']
-        inter = defgate[defgate.keys()[0]][1]
+        inter = defgate[list(defgate.keys())[0]][1]
     else: inter = interface
     mac = netifaces.ifaddresses(inter)[netifaces.AF_LINK][0]['addr']
     return mac
@@ -136,7 +138,7 @@ def iskodirunning():
 
 def signalhandler(ret):
     loop.quit()
-    if debug: print 'Kodi has exited (signal received) with return code:',ret
+    if debug: print('Kodi has exited (signal received) with return code:',ret)
 
 while True:
     s = opensoc(host,port,'bind')
@@ -145,29 +147,29 @@ while True:
     while not found:
         # UDP max packet size is 65536, magic packet size is 102 for 48-bit MAC addresses
         conn1 = s.recv(102)
-        if debug: print 'Received a packet...'
+        if debug: print('Received a packet...')
 
         # Yatse sends some text, then magic packet. Kore just sends two identical magic packets.
-        if conn1 == 'YatseStart-Xbmc' or conn1.startswith(init):
+        if conn1 == b'YatseStart-Xbmc' or conn1.startswith(init):
             s.settimeout(1) # possibly needs increasing
             try: conn2 = s.recv(102)
             except socket.timeout: continue
             finally: s.settimeout(None)
-            if debug: print 'This one looks like a WOL packet'
-        if conn1 == 'YatseStart-Xbmc': found = chkmagic(conn2)
+            if debug: print('This one looks like a WOL packet')
+        if conn1 == b'YatseStart-Xbmc': found = chkmagic(conn2)
         else:
             found1 = chkmagic(conn1)
             if found1: found = chkmagic(conn2)
 
-    if debug: print 'Now found 2nd packet and validated packet(s)'
-    if debug: print 'Checking to see if Kodi is already running'
+    if debug: print('Now found 2nd packet and validated packet(s)')
+    if debug: print('Checking to see if Kodi is already running')
     # Check if ANY instance of Kodi running
     running = iskodirunning()
     if running: continue
 
     s.close()
     
-    if debug: print 'Now trying to start Kodi over D-Bus'
+    if debug: print('Now trying to start Kodi over D-Bus')
     if lastuid == -1: pass
     else: lastuid = uid
     try: uid = getactivesysd()
@@ -190,7 +192,7 @@ while True:
         service = bus.get_object('org.amwaketool','/')
     
     pid = service.startkodi()
-    if debug: print 'Kodi has started with PID =',pid
+    if debug: print('Kodi has started with PID =',pid)
 
     loop = gi.repository.GLib.MainLoop()
     run = loop.run()

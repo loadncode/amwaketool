@@ -9,22 +9,19 @@ Note that amwaketool requires root permissions by default because it listens on 
 <h1>Compatibility</h1>
 amwaketool should work on Linux distros, it has been tested on Debian and Arch. Not tested on Raspberry Pi yet.
 
-Presently amwaketool is only compatible with Python 2.x and not Python 3.x.
+amwaketool is compatible with Python 2.6 and above, including Python 3.x.
 
 Technically either systemd-logind or ConsoleKit is required but practically all distros use at least one of these.
 
 <h1>Dependencies</h1>
 
-amwaketool requires the following Python 2.x modules:
+amwaketool requires the following Python modules:
 
-  * dbus-python ("python-dbus" in Debian repository)
-  * PyGObject ("python-gi" in Debian repository)
+  * dbus-python 
+  * PyGObject (also known as python-gi / python3-gi)
   * netifaces
 
-You can either install these with pip or (if available) via your distro's repositories. Exact module names may vary between distro repositories. To install via pip run:
-
-"pip install dbus-python PyGObject netifaces"
-
+You can check if you already have these installed by running amwaketool.py from the command line. If you need to install any modules then you can either install them with pip or (if available) via your distro's repositories. Exact module names may vary between distro repositories. You must install the correct module versions for either Python 2 or Python 3 (whichever is your system default).
 
 <h1>Installing / Uninstalling</h1>
 

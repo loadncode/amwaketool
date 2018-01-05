@@ -24,7 +24,7 @@ import socket
 import os
 import struct
 import sys
-import json
+import iskodirunning
 import pwd
 # import systemd.journal
 try: import dbus
@@ -117,25 +117,6 @@ def getactiveck():
         if not props.Get('org.freedesktop.ConsoleKit.Session','is-local'): continue
         if props.Get('org.freedesktop.ConsoleKit.Session','active'): return uid
 
-def iskodirunning():
-    rpc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try: rpc.connect(('localhost', 9090))
-    except socket.error:
-        return False
-    else:
-        rpc.sendall('{"jsonrpc":"2.0","method":"JSONRPC.Ping","id":1}')
-        while True:
-            data,addr = rpc.recvfrom(1024)
-            if data:
-                break
-        rpc.close()
-        thing = json.loads(data)
-        if thing['result'] == 'pong':            
-            return True
-        else:
-            return False # should report an error here, since this should not happen
-    finally: rpc.close()
-
 def signalhandler(ret):
     loop.quit()
     if debug: print('Kodi has exited (signal received) with return code:',ret)
@@ -164,7 +145,7 @@ while True:
     if debug: print('Now found 2nd packet and validated packet(s)')
     if debug: print('Checking to see if Kodi is already running')
     # Check if ANY instance of Kodi running
-    running = iskodirunning()
+    running = iskodirunning.runcheck()
     if running: continue
 
     s.close()

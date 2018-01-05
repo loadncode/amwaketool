@@ -69,6 +69,10 @@ case "$1" in
         chmod 755 /usr/local/bin/amwaketool-dbus-service.py
         chown 0:0 /usr/local/bin/amwaketool-dbus-service.py
 
+	cp iskodirunning.py /usr/local/bin/iskodirunning.py
+	chmod 755 /usr/local/bin/iskodirunning.py
+	chown 0:0 /usr/local/bin/iskodirunning.py
+
         cp org.amwaketool.service /usr/share/dbus-1/services/org.amwaketool.service
         chmod 644 /usr/share/dbus-1/services/org.amwaketool.service
         chown 0:0 /usr/share/dbus-1/services/org.amwaketool.service
@@ -124,6 +128,7 @@ case "$1" in
         rm /usr/local/bin/amwaketool-dbus-service.py
         rm /usr/share/dbus-1/services/org.amwaketool.service
         rm /usr/local/bin/amwaketool.py
+	rm /usr/local/bin/iskodirunning.py
 
         ./removebusaddr.py
         
